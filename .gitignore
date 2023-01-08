@@ -31,5 +31,6 @@
 *.out
 *.app
 
-# Directory
+# Config directories
 build/
+.vscode/
