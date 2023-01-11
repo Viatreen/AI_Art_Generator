@@ -19,7 +19,6 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Building in Debug mode")
 endif()
 
-
 project(AI_Art_Generator LANGUAGES CXX CUDA)
 message("Project name: " ${CMAKE_PROJECT_NAME})
 
@@ -54,7 +53,7 @@ target_compile_options(${CMAKE_PROJECT_NAME}
 )
 
 set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
-set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CUDA_ARCHITECTURES 75) # 61 = GTX 1080 Ti
+set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CUDA_ARCHITECTURES 75) # Running on GTX 1660 Ti
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE _DEBUG)

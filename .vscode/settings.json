@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "xlocale": "cpp",
-        "iostream": "cpp",
-        "iosfwd": "cpp"
-    }
-}
