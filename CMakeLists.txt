@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.17 FATAL_ERROR)
 
 # if (MSVC)
-#   set(CMAKE_CUDA_COMPILER "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.0\\bin\\nvcc.exe")
-#   set(CMAKE_CXX_COMPILER "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.34.31933\\bin\\Hostx64\\x64\\cl.exe")
+#   set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0/bin/nvcc.exe")
+#   set(CMAKE_CXX_COMPILER "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.34.31933/bin/Hostx64/x64/cl.exe")
 # endif()
 
 if (UNIX)
@@ -11,20 +11,26 @@ endif()
 
 if(WIN32)
     message(STATUS "Project is building for Windows")
-    set(CUDA_TOOLKIT_ROOT_DIR "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.0")
-    set(CMAKE_CUDA_COMPILER "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.0\\bin\\nvcc.exe")
+    set(CUDA_TOOLKIT_ROOT_DIR "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0")
+    set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0/bin/nvcc.exe")
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Building in Debug mode")
 endif()
 
+if(MNIST)
+project(MNIST LANGUAGES CXX CUDA)
+message(STATUS "Project is building for Windows")
+else()
 project(AI_Art_Generator LANGUAGES CXX CUDA)
+endif()
+
 message("Project name: " ${CMAKE_PROJECT_NAME})
 
 if(WIN32)
     message(STATUS "Project is building for Windows")
-    set(CUDA_TOOLKIT_ROOT_DIR "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.0")
+    set(CUDA_TOOLKIT_ROOT_DIR "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0")
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
@@ -40,11 +46,22 @@ include_directories(
     /
 )
 
-add_executable(${CMAKE_PROJECT_NAME} ${sources})
+add_executable(${CMAKE_PROJECT_NAME})
+
+if(MNIST)
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+        MNIST/MNIST_main.cu
+        MNIST/MNIST_neural_network.cu
+    )
+    else()
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+        AI_Art_Generator/main.cu
+    )
+endif()
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    AI_Art_Generator/main.cu
     AI_Art_Generator/Utils/error_check_cuda.cu
+    AI_Art_Generator/Utils/gpu_info_print.cu
 )
 
 target_compile_options(${CMAKE_PROJECT_NAME}

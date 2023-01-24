@@ -9,6 +9,7 @@
 
 // Project Headers
 #include "AI_Art_Generator/Utils/error_check_cuda.hpp"
+#include "AI_Art_Generator/Utils/gpu_info_print.hpp"
 
 __global__ void my_kernel(int unused_param)  // unused_param - CUDA documentation does not inform how to launch a cooperative group kernel without function any arguments
 {
@@ -32,20 +33,10 @@ __global__ void my_kernel(int unused_param)  // unused_param - CUDA documentatio
 
 int main(void)
 {
-    int device_number = 0;
-    int supports_coop_launch = 0;
-    cudaDeviceGetAttribute(&supports_coop_launch, cudaDevAttrCooperativeLaunch, device_number);
+    std::cout << "AI_Art Begin" << std::endl;
 
-    if(!supports_coop_launch) {
-        std::cout << "This GPU does not support cooperative groups" << std::endl;
-        return 1;
-    }
-    else {
-        std::cout << "This GPU supports cooperative groups" << std::endl;
-    }
+    util::gpu_info_print();
 
-    cudaDeviceProp device_prop;
-    cudaGetDeviceProperties(&device_prop, device_number);
     dim3 grid_dim(256, 1, 1);
     std::cout << "Blocks per grid: " << grid_dim.x << std::endl;
     dim3 block_dim(128, 1, 1);
@@ -58,10 +49,6 @@ int main(void)
     cuda_check(cudaDeviceSynchronize());
 
     printf("Hello CUDA!\n");
-
-    #ifdef WIN32
-    system("Pause");
-    #endif
 
     return 0;
 }
