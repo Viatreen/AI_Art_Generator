@@ -20,15 +20,15 @@ struct filter3x3 {
     nn_float weight[FIRST_LAYER_FILTER_SIZE];
 };
 
-struct neural_network {
+struct NN {
     nn_float  input[INPUT_SIZE];
-    filter3x3 filter[FIRST_LAYER_CHANNEL_AMOUNT];
-    nn_float  raw_output[FIRST_LAYER_OUTPUT_SIZE];
-    nn_float  norm_output[FIRST_LAYER_OUTPUT_SIZE];
-    nn_float  activation_output[FIRST_LAYER_OUTPUT_SIZE];
+    filter3x3 first_layer_filter[FIRST_LAYER_CHANNEL_AMOUNT];
+    nn_float  first_layer_raw_output[FIRST_LAYER_OUTPUT_SIZE];
+    nn_float  first_layer_norm_output[FIRST_LAYER_OUTPUT_SIZE];
+    nn_float  first_layer_activation_output[FIRST_LAYER_OUTPUT_SIZE];
 };
 
-__global__ void populate(neural_network *nn);
-__global__ void run(neural_network *nn);
+__global__ void populate(NN *nn);
+__global__ void run(NN *nn);
 
 } // namespace neural_network
