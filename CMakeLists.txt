@@ -62,6 +62,7 @@ endif()
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     AI_Art_Generator/Utils/error_check_cuda.cu
     AI_Art_Generator/Utils/gpu_info_print.cu
+    AI_Art_Generator/Utils/cuda_helper.cu
 )
 
 target_compile_options(${CMAKE_PROJECT_NAME}

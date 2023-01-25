@@ -35,9 +35,12 @@ int main(void)
 {
     std::cout << "AI_Art Begin" << std::endl;
 
-    util::gpu_info_print();
+    int status = util::gpu_info_print();
+    if (status) {
+        return status; // No need for print statement. Print comes from within gpu_info_print
+    }
 
-    dim3 grid_dim(256, 1, 1);
+    dim3 grid_dim(128, 1, 1);
     std::cout << "Blocks per grid: " << grid_dim.x << std::endl;
     dim3 block_dim(128, 1, 1);
     std::cout << "Threads per block: " << block_dim.x << std::endl;

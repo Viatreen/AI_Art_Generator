@@ -145,7 +145,7 @@ void cuda_check_expanded(cudaError_t result, const char *function_name, const ch
 {
     if(result)
     {
-        std::cout << "CUDA Error: " << cuda_return_error_string(result) << " (" << result << "), Function name: " << function_name << ", Filename:" << filename << ", Line number: " << line_number << std::endl;
+        std::cout << "CUDA Error: " << cuda_return_error_string(result) << " (" << result << "), Function name: " << function_name << ", Filename:" << filename << ":" << line_number << std::endl;
     }
 
     return;
