@@ -10,12 +10,12 @@
 
 namespace neural_network {
 
-__global__ void populate(NN *nn)
+__global__ void populate(NN<nn_float> *nn)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
 
     if(idx < INPUT_SIZE) {
-        nn->input[idx] = nn_float(1);
+        nn->input[idx] = nn_float(0.01 * idx);
     }
 
     if(idx < FIRST_LAYER_CHANNEL_AMOUNT * FIRST_LAYER_FILTER_SIZE) {
@@ -34,13 +34,16 @@ __global__ void populate(NN *nn)
     return;
 }
 
-__global__ void run(NN *nn)
+__global__ void run(NN<nn_float> *nn)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
 
     cooperative_groups::grid_group g = cooperative_groups::this_grid();
 
+    // TODO: Optimize this
+    // TODO: Create improved summation function. Optimize it too
     for (int channel_index = 0; channel_index < FIRST_LAYER_CHANNEL_AMOUNT; channel_index++) {
+        #pragma unroll
         for (int weight_index = 0; weight_index < FIRST_LAYER_FILTER_SIZE; weight_index++) {
             if (idx < FIRST_LAYER_OUTPUT_SIZE) {
                 int input_index_x = idx % FIRST_LAYER_OUTPUT_DIM + weight_index % FIRST_LAYER_FILTER_DIM;
@@ -61,8 +64,34 @@ __global__ void run(NN *nn)
 
     if (idx < FIRST_LAYER_OUTPUT_SIZE) {
         // nn->first_layer_raw_output[idx] = nn_float(5);
-        printf("Output index %3d: %4.2f\n", idx, float(nn->first_layer_raw_output[idx]));
+        // printf("Output index %3d: %4.2f\n", idx, float(nn->first_layer_raw_output[idx]));
     }
 }
+
+__host__ void convert_half_2_float(std::unique_ptr<neural_network::NN<__half>>& in, std::unique_ptr<neural_network::NN<float>>& out)
+{
+    for (size_t i = 0; i < INPUT_SIZE; i++)
+    {
+        out->input[i] = __half2float(in->input[i]);
+    }
+
+    for (size_t i = 0; i < FIRST_LAYER_CHANNEL_AMOUNT; i++)
+    {
+        for (size_t j = 0; j < FIRST_LAYER_FILTER_SIZE; j++)
+        {
+            out->first_layer_filter[i].weight[j] = __half2float(in->first_layer_filter[i].weight[j]);
+        }
+    }
+
+    for (size_t i = 0; i < FIRST_LAYER_OUTPUT_SIZE; i++)
+    {
+        out->first_layer_raw_output[i] = __half2float(in->first_layer_raw_output[i]);
+        out->first_layer_norm_output[i] = __half2float(in->first_layer_norm_output[i]);
+        out->first_layer_activation_output[i] = __half2float(in->first_layer_activation_output[i]);
+    }
+
+    return;
+}
+
 
 } // Namespace neural_network

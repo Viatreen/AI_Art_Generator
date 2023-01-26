@@ -34,3 +34,6 @@
 # Config directories
 build/
 .vscode/
+
+# State saving
+# Saves/
