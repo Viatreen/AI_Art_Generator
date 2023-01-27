@@ -78,4 +78,9 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE _DEBUG)
     target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-G>)
 endif()
- 
+
+if(ACTIVATION_NOTHING)
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE ACTIVATION_NOTHING)
+elseif(ACTIVATION_MICK_RELU)
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE ACTIVATION_MICK_RELU)
+endif()

@@ -14,7 +14,9 @@ typedef __half nn_float;
 #define FIRST_LAYER_OUTPUT_SIZE     ( FIRST_LAYER_OUTPUT_DIM * FIRST_LAYER_OUTPUT_DIM )
 #define FIRST_LAYER_CHANNEL_AMOUNT    32
 
-#define ACTIVATION_SLOPE_INV        ( nn_float(100) )
+#define ACTIVATION_SLOPE            ( nn_float(1) / nn_float(128) )
+#define ACTIVATION_SLOPE_INV        ( nn_float(1) / ACTIVATION_SLOPE )
+
 namespace neural_network {
 
 template <int dim, typename t_float>

@@ -59,6 +59,7 @@ __host__ void write_2_csv(neural_network::NN<__half> *nn)
 
 
     std::stringstream csv_file_contents;
+    // Print data labels
     csv_file_contents << "Input:,";
     for (size_t i = 0; i < INPUT_DIM + DATA_PRINT_GAP - 1; i++)
     {
@@ -79,12 +80,21 @@ __host__ void write_2_csv(neural_network::NN<__half> *nn)
 
     csv_file_contents << "Activated:\n";
 
+    // Print data
     size_t max_dim = std::max({INPUT_DIM, (FIRST_LAYER_FILTER_DIM + 1) * FIRST_LAYER_CHANNEL_AMOUNT - 1, FIRST_LAYER_OUTPUT_DIM});
     for (size_t row = 0; row < max_dim; row++)
     {
         size_t column_amount = INPUT_DIM + DATA_PRINT_GAP + FIRST_LAYER_FILTER_DIM + DATA_PRINT_GAP + FIRST_LAYER_OUTPUT_DIM + DATA_PRINT_GAP + FIRST_LAYER_OUTPUT_DIM;
         for (size_t column = 0; column < column_amount; column++)
         {
+
+            int layer_1_data_gap_1      = INPUT_DIM + DATA_PRINT_GAP;
+            int layer_1_filter_col      = layer_1_data_gap_1 + FIRST_LAYER_FILTER_DIM;
+            int layer_1_data_gap_2      = layer_1_filter_col + DATA_PRINT_GAP;
+            int layer_1_raw_col         = layer_1_data_gap_2 + FIRST_LAYER_OUTPUT_DIM;
+            int layer_1_data_gap_3      = layer_1_raw_col + DATA_PRINT_GAP;
+            int layer_1_activated_col   = layer_1_data_gap_3 + FIRST_LAYER_OUTPUT_DIM;
+
             // Input Array
             if (column < INPUT_DIM) {
                 if (row < INPUT_DIM) {
@@ -96,18 +106,18 @@ __host__ void write_2_csv(neural_network::NN<__half> *nn)
             }
 
             // Data gap
-            else if (column < INPUT_DIM + DATA_PRINT_GAP) {
+            else if (column < layer_1_data_gap_1) {
                 csv_file_contents << ",";
             }
 
             // Filters
-            else if (column < INPUT_DIM + DATA_PRINT_GAP + FIRST_LAYER_FILTER_DIM) {
+            else if (column < layer_1_filter_col) {
                 if ((row != 0 && (row + 1) % (FIRST_LAYER_FILTER_DIM + 1) == 0) || (row > (FIRST_LAYER_FILTER_DIM + 1) * FIRST_LAYER_CHANNEL_AMOUNT - 1)) {
                     csv_file_contents << ",";
                 }
                 else {
                     int channel_index = row / (FIRST_LAYER_FILTER_DIM + 1);
-                    int weight_index_x = (column - (INPUT_DIM + DATA_PRINT_GAP));
+                    int weight_index_x = (column - (layer_1_data_gap_1));
                     int weight_index_y = row % (FIRST_LAYER_FILTER_DIM + 1);
                     int weight_index = FIRST_LAYER_FILTER_DIM * weight_index_y + weight_index_x;
 
@@ -116,16 +126,33 @@ __host__ void write_2_csv(neural_network::NN<__half> *nn)
             }
 
             // Data gap
-            else if (column < INPUT_DIM + DATA_PRINT_GAP + FIRST_LAYER_FILTER_DIM + DATA_PRINT_GAP) {
+            else if (column < layer_1_data_gap_2) {
                 csv_file_contents << ",";
             }
 
             // Raw output data
-            else if (column < INPUT_DIM + DATA_PRINT_GAP + FIRST_LAYER_FILTER_DIM + DATA_PRINT_GAP + FIRST_LAYER_OUTPUT_DIM) {
+            else if (column < layer_1_raw_col) {
                 if (row < FIRST_LAYER_OUTPUT_DIM) {
-                    int index = column - (INPUT_DIM + DATA_PRINT_GAP + FIRST_LAYER_FILTER_DIM + DATA_PRINT_GAP) + FIRST_LAYER_OUTPUT_DIM * row;
+                    int index = column - (layer_1_data_gap_2) + FIRST_LAYER_OUTPUT_DIM * row;
 
                     csv_file_contents << full_nn->first_layer_raw_output[index] << ",";
+                }
+                else {
+                    csv_file_contents << ",";
+                }
+            }
+
+            // Data gap
+            else if (column < layer_1_data_gap_3) {
+                csv_file_contents << ",";
+            }
+
+            // Activated output data
+            else if (column < layer_1_activated_col) {
+                if (row < FIRST_LAYER_OUTPUT_DIM) {
+                    int index = column - (layer_1_data_gap_3) + FIRST_LAYER_OUTPUT_DIM * row;
+
+                    csv_file_contents << full_nn->first_layer_activation_output[index] << ",";
                 }
                 else {
                     csv_file_contents << ",";

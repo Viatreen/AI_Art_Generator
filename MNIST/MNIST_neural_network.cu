@@ -10,6 +10,31 @@
 
 namespace neural_network {
 
+#ifdef ACTIVATION_NOTHING
+__device__ inline nn_float activate(nn_float in)
+{
+    return in;
+}
+#elif ACTIVATION_MICK_RELU
+__device__ inline nn_float activate(nn_float in)
+{
+    if(in < nn_float(1) && in > nn_float(-1)) {
+        return in;
+    }
+    else if(in > nn_float(1)) {
+        return ACTIVATION_SLOPE * in + ( nn_float(1) - ACTIVATION_SLOPE);
+    }
+    else {
+        return ACTIVATION_SLOPE * in - ( nn_float(1) - ACTIVATION_SLOPE);
+    }
+}
+#endif
+
+__device__ inline nn_float reduce(nn_float *in, size_t size)
+{
+    
+}
+
 __global__ void populate(NN<nn_float> *nn)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
@@ -63,9 +88,12 @@ __global__ void run(NN<nn_float> *nn)
     }
 
     if (idx < FIRST_LAYER_OUTPUT_SIZE) {
-        // nn->first_layer_raw_output[idx] = nn_float(5);
-        // printf("Output index %3d: %4.2f\n", idx, float(nn->first_layer_raw_output[idx]));
+        nn->first_layer_activation_output[idx] = activate(nn->first_layer_raw_output[idx]);
     }
+
+    g.sync();
+
+    return;
 }
 
 __host__ void convert_half_2_float(std::unique_ptr<neural_network::NN<__half>>& in, std::unique_ptr<neural_network::NN<float>>& out)
