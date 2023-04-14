@@ -30,11 +30,6 @@ __device__ inline nn_float activate(nn_float in)
 }
 #endif
 
-__device__ inline nn_float reduce(nn_float *in, size_t size)
-{
-    
-}
-
 __global__ void populate(NN<nn_float> *nn)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;

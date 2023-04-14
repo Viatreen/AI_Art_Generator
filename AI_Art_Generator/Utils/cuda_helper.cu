@@ -1,5 +1,3 @@
-
-
 // File Header
 #include "AI_Art_Generator/Utils/cuda_helper.hpp"
 

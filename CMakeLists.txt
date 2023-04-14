@@ -20,10 +20,11 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 endif()
 
 if(MNIST)
-project(MNIST LANGUAGES CXX CUDA)
-message(STATUS "Project is building for Windows")
+    project(MNIST LANGUAGES CXX CUDA)
+elseif(TEST_ALL)
+    project(Test_All LANGUAGES CXX CUDA)
 else()
-project(AI_Art_Generator LANGUAGES CXX CUDA)
+    project(AI_Art_Generator LANGUAGES CXX CUDA)
 endif()
 
 message("Project name: " ${CMAKE_PROJECT_NAME})
@@ -53,7 +54,11 @@ if(MNIST)
         MNIST/MNIST_main.cu
         MNIST/MNIST_neural_network.cu
     )
-    else()
+elseif(TEST_ALL)
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+        Tests/reduce.test.cu
+    )
+else()
     target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         AI_Art_Generator/main.cu
     )
@@ -63,7 +68,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     AI_Art_Generator/Utils/error_check_cuda.cu
     AI_Art_Generator/Utils/gpu_info_print.cu
     AI_Art_Generator/Utils/cuda_helper.cu
-    AI_Art_Generator/Utils/file_writer_neural_net.cu
+    # AI_Art_Generator/Utils/file_writer_neural_net.cu
 )
 
 target_compile_options(${CMAKE_PROJECT_NAME}

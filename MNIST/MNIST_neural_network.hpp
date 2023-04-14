@@ -1,10 +1,10 @@
 #pragma once
 
+// CUDA Headers
 #include <cuda_fp16.h>
 
-typedef __half nn_float;
-
-#define BLOCK_SIZE      256
+// Project Headers
+#include "AI_Art_Generator/Utils/config.hpp"
 
 #define INPUT_DIM                     28
 #define INPUT_SIZE                  ( INPUT_DIM * INPUT_DIM )

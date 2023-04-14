@@ -7,8 +7,11 @@
 #include <fstream>
 #include <sstream>
 
-// Nvidia
+// CUDA
 #include <cuda_fp16.h>
+
+// Project Headers
+#include "AI_Art_Generator/Utils/config.hpp"
 
 // File Header
 #include "AI_Art_Generator/Utils/file_writer_neural_net.hpp"
@@ -20,10 +23,10 @@
 
 namespace util {
 
-__host__ void write_2_csv(neural_network::NN<__half> *nn)
+__host__ void write_2_csv(neural_network::NN<nn_float> *nn)
 {
     std::unique_ptr<neural_network::NN<nn_float>> half_nn(new neural_network::NN<nn_float>);
-    cudaMemcpy(half_nn.get(), nn, sizeof(neural_network::NN<__half>), cudaMemcpyDeviceToHost);
+    cudaMemcpy(half_nn.get(), nn, sizeof(neural_network::NN<nn_float>), cudaMemcpyDeviceToHost);
 
     std::unique_ptr<neural_network::NN<float>> full_nn(new neural_network::NN<float>);
 
