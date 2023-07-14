@@ -11,8 +11,8 @@ endif()
 
 if(WIN32)
     message(STATUS "Project is building for Windows")
-    set(CUDA_TOOLKIT_ROOT_DIR "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0")
-    set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0/bin/nvcc.exe")
+    set(CUDA_TOOLKIT_ROOT_DIR "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1")
+    set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin/nvcc.exe")
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -28,11 +28,6 @@ else()
 endif()
 
 message("Project name: " ${CMAKE_PROJECT_NAME})
-
-if(WIN32)
-    message(STATUS "Project is building for Windows")
-    set(CUDA_TOOLKIT_ROOT_DIR "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0")
-endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CUDA_STANDARD 17)
@@ -68,7 +63,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     AI_Art_Generator/Utils/error_check_cuda.cu
     AI_Art_Generator/Utils/gpu_info_print.cu
     AI_Art_Generator/Utils/cuda_helper.cu
-    # AI_Art_Generator/Utils/file_writer_neural_net.cu
+    AI_Art_Generator/Utils/file_writer_neural_net.cu
 )
 
 target_compile_options(${CMAKE_PROJECT_NAME}
