@@ -36,6 +36,7 @@ if (MSVC)
     message(STATUS "Building for Windows with MSVC")
     set(_CRT_SECURE_NO_WARNINGS 1)
     set(CURL_STATICLIB 1)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 endif()
 
 include_directories(
@@ -48,6 +49,7 @@ if(MNIST)
     target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         MNIST/MNIST_main.cu
         MNIST/MNIST_neural_network.cu
+        AI_Art_Generator/Utils/file_writer_neural_net.cu
     )
 elseif(TEST_ALL)
     target_sources(${CMAKE_PROJECT_NAME} PRIVATE
@@ -63,7 +65,6 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     AI_Art_Generator/Utils/error_check_cuda.cu
     AI_Art_Generator/Utils/gpu_info_print.cu
     AI_Art_Generator/Utils/cuda_helper.cu
-    AI_Art_Generator/Utils/file_writer_neural_net.cu
 )
 
 target_compile_options(${CMAKE_PROJECT_NAME}
@@ -72,15 +73,25 @@ target_compile_options(${CMAKE_PROJECT_NAME}
 )
 
 set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
-set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CUDA_ARCHITECTURES 75) # Running on GTX 1660 Ti
+set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CUDA_ARCHITECTURES 61 75 87) # Running on GTX 1080 Ti, GTX 1660 Ti, and Jetson AGX Orin
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE _DEBUG)
     target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-G>)
 endif()
 
+if(NN_HALF_FLOAT)
+    message(STATUS "Using half precision floating for neural network")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE NN_HALF_FLOAT)
+else()
+    message(STATUS "Using full precision floating for neural network")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE NN_FULL_FLOAT)
+endif()
+
 if(ACTIVATION_NOTHING)
+    message(STATUS "Not using an activation function")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE ACTIVATION_NOTHING)
 elseif(ACTIVATION_MICK_RELU)
+    message(STATUS "Using the Mick ReLU activation function")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE ACTIVATION_MICK_RELU)
 endif()
