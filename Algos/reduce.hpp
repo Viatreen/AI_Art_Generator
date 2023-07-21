@@ -3,7 +3,7 @@
 // Project Headers
 #include "AI_Art_Generator/Utils/config.hpp"
 
-__device__ inline void sum_in_place(nn_float *in, int size)
+__device__ inline void sum_in_place_up_to_4000_elements(nn_float *in, int size)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
 
